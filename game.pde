@@ -1,86 +1,93 @@
 void game() {
   clear();
   
-  String Score = scoreleft + " : " + scoreright;
-  textSize(44);
-  text(Score, 400, 78);
-  
   strokeWeight(5);
+  stroke(#FFADF7);
   fill(#FFFFFF);
-  stroke(color1);
-  circle(leftx, lefty, leftd);
-  stroke(color2);
-  circle(rightx, righty, rightd);
-  stroke(color3);
-  circle(puckx, pucky, puckd);
-    
-  puckx = puckx + puckvx;
-  pucky = pucky + puckvy;
+  circle(paddlex, paddley, paddled);
+  if (akey == true && paddlex >= 100) paddlex = paddlex - 5;
+  if (dkey == true && paddlex <= 700) paddlex = paddlex + 5;
+  if (leftkey == true && paddlex >= 100) paddlex = paddlex - 5;
+  if (rightkey == true && paddlex <= 700) paddlex = paddlex + 5;
   
-  if (wkey == true && lefty >= leftd / 2) lefty = lefty - 5;
-  if (skey == true && lefty <= 600 - leftd / 2) lefty = lefty + 5;
-  if (upkey == true && righty >= rightd / 2) righty = righty - 5;
-  if (downkey == true && righty <= 600 - rightd / 2) righty = righty + 5;
+  strokeWeight(0);
+  stroke(#FFFFFF);
+  fill(#FFFFFF);
+  circle(ballx, bally, balld);
+  ballx = ballx + ballvx;
+  bally = bally + ballvy;
   
-  leftdistx = puckx - leftx;
-  rightdistx = rightx - puckx;
-  
-  leftdisty = lefty - pucky;
-  rightdisty = righty - pucky;
-  
-  lefttotaldist = sqrt(pow(leftdisty, 2) + pow(leftdistx, 2));
-  righttotaldist = sqrt(pow(rightdisty, 2) + pow(rightdistx, 2));
-  
-  if (lefttotaldist <= leftd / 2 + puckd / 2) {
-    puckvx = (10 * ((puckx - leftx) / lefttotaldist));
-    puckvy = (10 * ((pucky - lefty) / lefttotaldist));
-  } //<>//
-  if (righttotaldist <= rightd / 2 + puckd / 2) {
-    puckvx = (-10 * ((rightx - puckx) / righttotaldist));
-    puckvy = (-10 * ((righty - pucky) / righttotaldist));
+  int i = 0;
+  while (i < n) {
+    if (alive[i] == true) {
+      manageBrick(i);
+    }
+    i++;
   }
   
-  if (pucky <= puckd / 2) {
-    puckvy = -1 * puckvy;
-  }
-  if (pucky >= 600 - puckd / 2) {
-    puckvy = -1 * puckvy;
-  }
-  
-  if (puckx <= leftx) {
-    leftx = 0;
-    lefty = height / 2;
-    rightx = 800;
-    righty = height / 2;
-    puckx = width / 2;
-    pucky = height / 2;
-    puckvx = -10;
-    puckvy = 0;
-    scoreright = scoreright + 1;
-  }
-  if (puckx >= rightx) {
-    leftx = 0;
-    lefty = height / 2;
-    rightx = 800;
-    righty = height / 2;
-    puckx = width / 2;
-    pucky = height / 2;
-    puckvx = 10;
-    puckvy = 0;
-    scoreleft = scoreleft + 1;
+  distx = paddlex - ballx;
+  disty = paddley - bally;
+  if (dist(ballx, bally, paddlex, paddley) <= paddled / 2 + balld / 2) {
+    ballvx = (ballx - paddlex) / 10;
+    ballvy = (bally - paddley) / 10;
   }
   
-  stroke(color4);
-  rect(760, 10, 10, 30);
-  rect(780, 10, 10, 30);
-  
-  if (scoreleft == 11 || scoreright == 11) {
+  if (ballx <= balld / 2) {
+    ballvx = -1 * ballvx;
+  }
+  if (ballx >= 800 - balld / 2) {
+    ballvx = -1 * ballvx;
+  }
+  if (bally <= balld / 2) {
+    ballvy = -1 * ballvy;
+  }
+  if (bally >= 800 - balld / 2) {
     mode = GAMEOVER;
   }
+  
+  String Score = "Score: " + score;
+  textSize(25);
+  fill(#FFFFFF);
+  text(Score, 50, 25);
+  
+  strokeWeight(1);
+  stroke(#000000);
+  fill(#FFFFFF);
+  rect(760, 10, 10, 30);
+  rect(780, 10, 10, 30);
 }
 
 void gameClicks() {
   if (mouseX > 750 && mouseX < 800 && mouseY > 0 && mouseY < 50) {
     mode = PAUSE;
   }
+}
+
+void manageBrick(int i) {
+  if (y[i] == 100) {
+    fill(color1);
+  }
+  if (y[i] == 150) {
+    fill(color2);
+  }
+  if (y[i] == 200) {
+    fill(color3);
+  }
+  if (y[i] == 250) {
+    fill(color4);
+  }
+  if (y[i] == 300) {
+    fill(color5);
+  }
+  if (y[i] == 350) {
+    fill(color6);
+  }
+  circle(x[i], y[i], brickd);
+  if (dist(ballx, bally, x[i], y[i]) <= brickd / 2 + balld / 2) {
+    ballvx = (ballx - x[i]) / 3;
+    ballvy = (bally - y[i]) / 3;
+    alive[i] = false;
+    score = score + 1;
+  }
+  i = i + 1;
 }
